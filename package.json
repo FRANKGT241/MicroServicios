@@ -1,0 +1,20 @@
+{
+  "name": "pagos",
+  "version": "1.0.0",
+  "description": "Servicio de pagos",
+  "main": "Index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "AM/FM",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.9.4",
+    "nodemon": "^3.1.0",
+    "sequelize": "^6.37.2"
+  }
+}
