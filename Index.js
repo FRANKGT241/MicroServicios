@@ -1,14 +1,14 @@
 import express from 'express';
 import cors from 'cors';
 import db from './DB/db.js';
-
+import route_service from './Routes/Service.js';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 
-//app.use('/NombredeApi/', routerCliente);
+app.use('/servicio/', route_service);
 
 const startServer = async () => {
     try {

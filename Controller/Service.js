@@ -1,116 +1,49 @@
-import ClientModel from "../Models/ClientMode.js";
-import {registerMovi} from "./controllerAuditoria.js"
-const tableName="cliente";
-export const getAllClients = async (req, res) => {
+import Service from "../Model/Service.js";
+
+export const get_all = async (req, res) => {
     try {
-        const clients = await ClientModel.findAll();
-        res.json(clients);
+        const services = await Service.findAll();
+        res.json(services);
     } catch (error) {
         res.json({ message: error.message });
     }
 }
 
-export const getClient = async (req, res) => {
+export const find_one = async (req, res) => {
     try {
-        const [client] = await ClientModel.findAll({
-            where: { idCliente: req.params.idCliente }
-        });
-        if(!client)
-        {
-            return res.status(404).json({ message: "Cliente no Registrado" });
+        const service = await Service.findByPk(req.params.id_servicio);
+        if(!service) {
+            return res.status(404).json({ message: "Servicio no encontrado" });
         }
-        res.json(client);
+        res.json(service);
     } catch (error) {
         res.json({ message: error.message });
     }
 }
 
-// Create Client
-export const createClient = async (req, res) => {
+export const create_service = async (req, res) => {
     try {
-        const [client] = await ClientModel.findAll({
-            where: { Nit: req.body.Nit }
-        });
-        if(client)
-        {
-            return res.json({ message: "Datos Duplicados: Ya Hay Un Registro Con Este NIT" });
+        const existingService = await Service.findOne({ where: { nombre: req.body.nombre } });
+        if(existingService) {
+            return res.json({ message: "Datos Duplicados: Ya existe un servicio con este nombre" });
         }
-        await ClientModel.create(req.body);
-        
-            //--------------------- PARA LA AUDITORIA ----------------------------------------------------------------
-            await ClientModel.findOne({
-                order: [['idCliente', 'DESC']] 
-            }).then((ultimoRegistro) => {
-                let idRegistroMov;
-                if (ultimoRegistro) {
-                    idRegistroMov = ultimoRegistro.idCliente;
-                    registerMovi(tableName, idRegistroMov, 1, 1);   
-                } else {
-                    console.log('No se encontraron registros en la tabla Clientes.');
-                }
-
-                console.log( "message: Auditoria registrada");
-            }).catch((error) => {
-                console.error('Error al registrar auditoria', error);
-            });
-            //----------------------- FIN ----------------------------------------------------------------------------------
-
-        res.json({
-            "message": "Registro creado correctamente"
-        });
+        await Service.create(req.body);
+        res.json({ message: "Registro creado correctamente" });
     } catch (error) {
         res.json({ message: error.message });
     }
 }
 
-export const updateClient = async (req, res) => {
+export const update_service = async (req, res) => {
     try {
-        const [client] = await ClientModel.findAll({
-            where: { idCliente: req.params.idCliente }
-        });
-        if(!client)
-        {
-            return res.status(404).json({ message: "Cliente no Registrado" });
+        const service = await Service.findByPk(req.params.id_servicio);
+        if(!service) {
+            return res.status(404).json({ message: "Servicio no encontrado" });
         }
-        await ClientModel.update(req.body, {
-            where: { idCliente: req.params.idCliente }
-        });
-        //--------------------- PARA LA AUDITORIA ----------------------------------------------------------------
-
-        await registerMovi(tableName, req.params.idCliente, 1, 2);
-
-        //----------------------- FIN ----------------------------------------------------------------------------------
-        res.json({
-            "message": "Registro actualizado correctamente"
-        });
+        await service.update(req.body);
+        res.json({ message: "Registro actualizado correctamente" });
     } catch (error) {
         res.json({ message: error.message });
     }
 }
 
-export const deleteClient = async (req, res) => {
-    try {
-        const [client] = await ClientModel.findAll({
-            where: { idCliente: req.params.idCliente }
-        });
-        if(!client)
-        {
-            return res.status(404).json({ message: "Cliente no Registrado" });
-        }
-        await ClientModel.destroy({
-            where: {
-                idCliente: req.params.idCliente
-            }
-        });
-        //--------------------- PARA LA AUDITORIA ----------------------------------------------------------------
-
-        await registerMovi(tableName, req.params.idCliente, 1, 3);
-
-        //----------------------- FIN ----------------------------------------------------------------------------------
-        res.json({
-            "message": "El registro se borró correctamente"
-        });
-    } catch (error) {
-        res.json({ message: error.message });
-    }
-}

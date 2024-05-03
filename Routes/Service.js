@@ -1,12 +1,11 @@
 import express from 'express'
-import { getAllClients, getClient, createClient, updateClient, deleteClient } from '../controllers/controllerCliente.js'
+import { get_all, find_one, create_service, update_service } from '../Controller/Service.js'
 
-const ClientRoute = express.Router()
+const route_service = express.Router()
 
-ClientRoute.get('/', getAllClients)
-ClientRoute.get('/:idCliente', getClient)
-ClientRoute.post('/', createClient)
-ClientRoute.put('/:idCliente', updateClient)
-ClientRoute.delete('/:idCliente', deleteClient)
+route_service.get('/', get_all)
+route_service.get('/:id', find_one)
+route_service.post('/', create_service)
+route_service.put('/:id', update_service)
 
-export default ClientRoute
+export default route_service

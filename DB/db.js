@@ -1,5 +1,5 @@
 import {Sequelize} from 'sequelize'
-const db=new Sequelize ('pfinal software','root','',{
+const db=new Sequelize ('pay_service','root','',{
     host:'localhost',
     dialect:'mysql'
 })
