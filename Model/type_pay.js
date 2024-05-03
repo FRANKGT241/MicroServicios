@@ -2,16 +2,19 @@ import db from "../DB/database.js"
 
 import { DataTypes } from "sequelize";
 
-const ServiceModel = db.define('cliente', {
-    id_servicio: {
+const type_pay_model = db.define('tipo_pago', {
+    id_tipo_pago: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
     },
+    descripcion: { 
+        type: DataTypes.STRING 
+    },
+    tipo: { 
+        type: DataTypes.STRING 
+    }
+}, { table_name: 'tipo_pago' });
 
-    nombre: { type: DataTypes.STRING },
-    descripcion: { type: DataTypes.STRING }
-}, { tableName: 'servicio' });
 
-
-export default ServiceModel
+export default type_pay_model

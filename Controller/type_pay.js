@@ -1,116 +1,98 @@
-import ClientModel from "../Models/ClientMode.js";
-import {registerMovi} from "./controllerAuditoria.js"
-const tableName="cliente";
-export const getAllClients = async (req, res) => {
+import type_pay_model from "../Model/type_pay.js";
+
+export const get_all = async (req, res) => {
     try {
-        const clients = await ClientModel.findAll();
-        res.json(clients);
+        const type_pay = await type_pay_model.findAll()
+        res.status(200).json(type_pay)
     } catch (error) {
-        res.json({ message: error.message });
+        res.json({ message: error.message })
     }
 }
 
-export const getClient = async (req, res) => {
+export const find_one = async (req, res) => {
     try {
-        const [client] = await ClientModel.findAll({
-            where: { idCliente: req.params.idCliente }
+        const [type_pay] = await type_pay_model.findAll({
+            where: { id: req.params.id }
         });
-        if(!client)
+        if(!type_pay)
         {
-            return res.status(404).json({ message: "Cliente no Registrado" });
+            return res.status(404).json({ message: "Paymment Type not found" })
         }
-        res.json(client);
+        res.status(200).json(type_pay)
     } catch (error) {
         res.json({ message: error.message });
     }
 }
 
 // Create Client
-export const createClient = async (req, res) => {
+export const create = async (req, res) => {
     try {
-        const [client] = await ClientModel.findAll({
-            where: { Nit: req.body.Nit }
+        const [type_pay] = await type_pay_model.findAll({
+            where: { tipo: req.body.tipo }
         });
-        if(client)
+        if(type_pay)
         {
-            return res.json({ message: "Datos Duplicados: Ya Hay Un Registro Con Este NIT" });
+            return res.json({ message: "You can't repeat Paymment Type" });
         }
-        await ClientModel.create(req.body);
+        const newTypePay = await type_pay_model.create(req.body);
         
-            //--------------------- PARA LA AUDITORIA ----------------------------------------------------------------
-            await ClientModel.findOne({
-                order: [['idCliente', 'DESC']] 
-            }).then((ultimoRegistro) => {
-                let idRegistroMov;
-                if (ultimoRegistro) {
-                    idRegistroMov = ultimoRegistro.idCliente;
-                    registerMovi(tableName, idRegistroMov, 1, 1);   
-                } else {
-                    console.log('No se encontraron registros en la tabla Clientes.');
-                }
-
-                console.log( "message: Auditoria registrada");
-            }).catch((error) => {
-                console.error('Error al registrar auditoria', error);
-            });
-            //----------------------- FIN ----------------------------------------------------------------------------------
-
-        res.json({
-            "message": "Registro creado correctamente"
+        res.status(200).json({
+            "message": "Successful registration",
+            "type_registred": newTypePay
         });
     } catch (error) {
         res.json({ message: error.message });
     }
 }
 
-export const updateClient = async (req, res) => {
+//update
+export const update = async (req, res) => {
     try {
-        const [client] = await ClientModel.findAll({
-            where: { idCliente: req.params.idCliente }
+        const [type_pay] = await type_pay_model.findAll({
+            where: { id_tipo_pago: req.params.id }
         });
-        if(!client)
+
+        if(!type_pay)
         {
-            return res.status(404).json({ message: "Cliente no Registrado" });
+            return res.status(404).json({ message: "Paymment Type not found" });
         }
-        await ClientModel.update(req.body, {
-            where: { idCliente: req.params.idCliente }
+
+        const newTypePay = await type_pay_model.update(req.body, {
+            where: { id_tipo_pago: req.params.id }
         });
-        //--------------------- PARA LA AUDITORIA ----------------------------------------------------------------
 
-        await registerMovi(tableName, req.params.idCliente, 1, 2);
-
-        //----------------------- FIN ----------------------------------------------------------------------------------
         res.json({
-            "message": "Registro actualizado correctamente"
+            "message": "Successful update",
+            "Type Updated": newTypePay
         });
     } catch (error) {
         res.json({ message: error.message });
     }
 }
 
-export const deleteClient = async (req, res) => {
-    try {
-        const [client] = await ClientModel.findAll({
-            where: { idCliente: req.params.idCliente }
-        });
-        if(!client)
-        {
-            return res.status(404).json({ message: "Cliente no Registrado" });
-        }
-        await ClientModel.destroy({
-            where: {
-                idCliente: req.params.idCliente
-            }
-        });
-        //--------------------- PARA LA AUDITORIA ----------------------------------------------------------------
+// export const deleteClient = async (req, res) => {
+//     try {
+//         const [client] = await ClientModel.findAll({
+//             where: { idCliente: req.params.idCliente }
+//         });
+//         if(!client)
+//         {
+//             return res.status(404).json({ message: "Cliente no Registrado" });
+//         }
+//         await ClientModel.destroy({
+//             where: {
+//                 idCliente: req.params.idCliente
+//             }
+//         });
+//         //--------------------- PARA LA AUDITORIA ----------------------------------------------------------------
 
-        await registerMovi(tableName, req.params.idCliente, 1, 3);
+//         await registerMovi(tableName, req.params.idCliente, 1, 3);
 
-        //----------------------- FIN ----------------------------------------------------------------------------------
-        res.json({
-            "message": "El registro se borró correctamente"
-        });
-    } catch (error) {
-        res.json({ message: error.message });
-    }
-}
+//         //----------------------- FIN ----------------------------------------------------------------------------------
+//         res.json({
+//             "message": "El registro se borró correctamente"
+//         });
+//     } catch (error) {
+//         res.json({ message: error.message });
+//     }
+// }
