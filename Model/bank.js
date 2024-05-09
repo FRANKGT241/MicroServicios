@@ -20,8 +20,6 @@ const bank_model = db.define('banco',{
     total_transferencias:{
         type: DataTypes.INTEGER
     }
-
-
 },{ table_name: 'banco' });
 
 export default bank_model
