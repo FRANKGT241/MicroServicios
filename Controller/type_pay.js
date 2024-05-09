@@ -12,7 +12,7 @@ export const get_all = async (req, res) => {
 export const find_one = async (req, res) => {
     try {
         const [type_pay] = await type_pay_model.findAll({
-            where: { id: req.params.id }
+            where: { id_tipo_pago: req.params.id }
         });
         if(!type_pay)
         {
@@ -56,11 +56,15 @@ export const update = async (req, res) => {
         {
             return res.status(404).json({ message: "Paymment Type not found" });
         }
-
-        const newTypePay = await type_pay_model.update(req.body, {
+        
+        await type_pay_model.update(req.body, {
             where: { id_tipo_pago: req.params.id }
         });
 
+        const [newTypePay] = await type_pay_model.findAll({
+            where: { id_tipo_pago: req.params.id }
+        });
+        
         res.json({
             "message": "Successful update",
             "Type Updated": newTypePay

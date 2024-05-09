@@ -2,13 +2,15 @@ import express from 'express';
 import cors from 'cors';
 import db from './DB/db.js';
 import route_service from './Routes/Service.js';
+import route_type_pay from './Routes/type_pay.js';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 
-app.use('/servicio/', route_service);
+app.use('/service/', route_service);
+app.use('/typePay/', route_type_pay);
 
 const startServer = async () => {
     try {
