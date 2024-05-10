@@ -1,5 +1,5 @@
 import express from 'express';
-import { get_all_cards, find_card_by_id, create_card, update_card } from '../Controller/Card';
+import { get_all_cards, find_card_by_id, create_card, update_card } from '../Controller/Card.js';
 
 const route_card = express.Router();
 
