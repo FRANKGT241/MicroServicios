@@ -1,4 +1,4 @@
-import db from "../DB/database.js"
+import db from "../DB/db.js"
 
 import { DataTypes } from "sequelize";
 

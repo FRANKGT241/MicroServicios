@@ -1,4 +1,4 @@
-import bank_model from "../Model/bank";
+import bank_model from "../Model/bank.js";
 
 //Obtener todo
 export const get_all = async (req,res) => {
