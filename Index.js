@@ -1,24 +1,10 @@
 import express from 'express';
 import cors from 'cors';
-import db from './DB/db.js';
-import route_service from './Routes/Service.js';
-import route_type_pay from './Routes/type_pay.js';
-import route_card from './Routes/Card.js';
-import route_customer from './Routes/Customer.js';
-import route_bank from './Routes/bank.js';
-import testRoutes from './Routes/testRoute.js';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-
-app.use('/service/', route_service);
-app.use('/typePay/', route_type_pay);
-app.use('/card/', route_card);
-app.use('/customer/', route_customer);
-app.use('/bank/', route_bank);
-app.use('/test', testRoutes);
 /*
 const startServer = async () => {
     try {
@@ -37,4 +23,8 @@ const startServer = async () => {
   */
   app.listen(4585, () => {
     console.log('Server UP running in http://localhost:4585/');
+  });
+
+  app.get('/', (req, res) => {
+    res.send('Hola, este es tu mensaje desde el servidor!');
   });
