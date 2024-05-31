@@ -1,24 +1,25 @@
-import db from "../DB/db.js"
+import db from "../DB/db.js";
+
 import { DataTypes } from "sequelize";
 
-const bank_model = db.define('banco',{
-    id_banco:{
+const bank_model = db.define('banco', {
+    id_banco: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
     },
-    nombre:{
-        type:DataTypes.STRING
+    nombre: {
+        type: DataTypes.STRING
     },
-    descripcion:{
+    descripcion: {
         type: DataTypes.STRING
     },
     contacto: {
         type: DataTypes.STRING
     },
-    total_transferencias:{
+    total_transferencias: {
         type: DataTypes.INTEGER
     }
-},{ table_name: 'banco' });
+}, { tableName: 'banco',timestamps: false });
 
-export default bank_model
+export default bank_model;
