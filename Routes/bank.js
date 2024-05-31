@@ -8,4 +8,4 @@ route_bank.get('/:id', find_one)
 route_bank.post('/', createbank)
 route_bank.put('/:id', updatebank)
 
-export default route_bank
+export default route_bank;

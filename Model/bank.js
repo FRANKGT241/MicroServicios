@@ -1,5 +1,4 @@
 import db from "../DB/db.js"
-
 import { DataTypes } from "sequelize";
 
 const bank_model = db.define('banco',{

@@ -53,12 +53,9 @@ export const updatebank = async (req, res) => {
         const [bank] = await bank_model.findAll({
             where: { id_banco: req.params.id }
         });
-
-        if(!bank)
-        {
+        if(!bank){
             return res.status(404).json({ message: "Banco no encontrado" });
         }
-
         const new_bank = await bank_model.update(req.body, {
             where: { id_banco: req.params.id }
         });
