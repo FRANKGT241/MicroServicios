@@ -18,6 +18,60 @@ app.use('/card/', route_card);
 app.use('/customer/', route_customer);
 app.use('/bank/', route_bank);
 app.use('/test', testRoutes);
+
+//Mendel
+
+
+
+
+
+
+
+
+
+
+
+
+//Mario
+
+
+
+
+
+
+
+
+
+
+
+
+//Ajpop
+
+
+
+
+
+
+
+
+
+
+
+//Frank
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*
 const startServer = async () => {
     try {
