@@ -24,6 +24,6 @@ const CardModel = db.define('tarjeta', {
         type: DataTypes.INTEGER,
         allowNull: false
     }
-}, { tableName: 'tarjeta' });
+}, { tableName: 'tarjeta',timestamps: false });
 
 export default CardModel;

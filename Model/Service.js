@@ -11,7 +11,7 @@ const ServiceModel = db.define('servicio', {
 
     nombre: { type: DataTypes.STRING },
     descripcion: { type: DataTypes.STRING }
-}, { table_name: 'servicio' });
+}, { table_name: 'servicio', timestamps: false });
 
 
 export default ServiceModel

@@ -25,6 +25,6 @@ const CustomerModel = db.define('cliente', {
         unique: true,
         allowNull: false
     }
-}, { tableName: 'cliente' });
+}, { tableName: 'cliente', timestamps: false });
 
 export default CustomerModel;

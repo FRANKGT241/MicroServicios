@@ -14,7 +14,9 @@ const type_pay_model = db.define('tipo_pago', {
     tipo: { 
         type: DataTypes.STRING 
     }
-}, { table_name: 'tipo_pago' });
+}, { table_name: 'tipo_pago',
+     timestamps: false 
+ });
 
 
 export default type_pay_model
