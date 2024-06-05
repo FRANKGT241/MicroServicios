@@ -1,4 +1,4 @@
-import Service from "../Model/Service.js";
+import Service from "../Model/service_model.js";
 
 export const get_all = async (req, res) => {
     try {

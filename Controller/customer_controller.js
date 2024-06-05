@@ -1,4 +1,4 @@
-import Customer from "../Model/Customer.js";
+import Customer from "../Model/customer_model.js";
 
 // GET
 export const get_all_customers = async (req, res) => {

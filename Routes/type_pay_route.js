@@ -1,5 +1,5 @@
 import express from 'express'
-import { get_all, find_one, create, update } from '../Controller/type_pay.js'
+import { get_all, find_one, create, update } from '../Controller/type_pay_controller.js'
 
 const route_type_pay = express.Router()
 
