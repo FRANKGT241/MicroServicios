@@ -33,4 +33,7 @@ const startServer = async () => {
   };
   
   startServer();
-  
+  */
+  app.listen(4585, () => {
+    console.log('Server UP running in http://localhost:4585/');
+  });
