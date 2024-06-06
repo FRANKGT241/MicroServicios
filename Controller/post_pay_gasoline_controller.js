@@ -103,12 +103,13 @@ export const complete_payment = async (req, res) => {
         }
 
         const pagos = req.body.pagos;
-
+        let correlativoFun
         for (const pago of pagos) {
-            const tipo_pago = pago.tipo_pago;
-            const banco = pago.banco;
-            const monto = pago.monto;
-            const numero_tarjeta = pago.numero_tarjeta;
+            const tipo_pago = pago.tipo_pago.toLowerCase()
+            const banco = pago.banco.toLowerCase()
+            const monto = pago.monto
+            const numero_tarjeta = pago.numero_tarjeta
+
             let id_temp_card = null;
             let id_temp_transaction = null;
             let id_temp_fidelity = null;
@@ -126,8 +127,9 @@ export const complete_payment = async (req, res) => {
                 }
                 id_temp_card = card.dataValues.id_tarjeta;
             } else if (tipo_pago.includes("transaccion")) {
+                correlativoFun="prueba-001"
                 let transaction = await transaction_model.create({
-                    correlativo: "prueba-001"
+                    correlativo: correlativoFun
                 });
                 id_temp_transaction = transaction.dataValues.id_transacciones;
             } else if (tipo_pago.includes("fidelidad") && data_customer.nit_cliente) {
@@ -163,7 +165,11 @@ export const complete_payment = async (req, res) => {
             }
         }
 
-        res.status(201).json({ respuesta: "ok", id_venta: req.body.id_venta });
+        res.status(201).json({ 
+            respuesta: "ok", 
+            estado_pago: "completado",
+            corelativo: correlativoFun
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
