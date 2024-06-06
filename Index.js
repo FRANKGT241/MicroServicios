@@ -8,6 +8,7 @@ import route_customer from './Routes/customer_route.js';
 import route_bank from './Routes/bank_route.js';
 import testRoutes from './Routes/test_route.js';
 
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -18,6 +19,7 @@ app.use('/card/', route_card);
 app.use('/customer/', route_customer);
 app.use('/bank/', route_bank);
 app.use('/test', testRoutes);
+
 
 //Mendel
 
@@ -33,7 +35,9 @@ app.use('/test', testRoutes);
 
 
 //Mario
+import convenienceStoreRoute from './Routes/convenience_store_route.js';
 
+app.use('/api', convenienceStoreRoute);
 
 
 

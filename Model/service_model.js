@@ -1,9 +1,8 @@
 import db from "../DB/db.js"
-
 import { DataTypes } from "sequelize";
 
 const ServiceModel = db.define('servicio', {
-    id_servido: {
+    id_servicio: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
@@ -11,7 +10,6 @@ const ServiceModel = db.define('servicio', {
 
     nombre: { type: DataTypes.STRING },
     descripcion: { type: DataTypes.STRING }
-}, { table_name: 'servicio', timestamps: false });
+}, { tableName: 'servicio', timestamps: false });
 
-
-export default ServiceModel
+export default ServiceModel;
