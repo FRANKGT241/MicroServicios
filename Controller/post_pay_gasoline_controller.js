@@ -8,7 +8,7 @@ import fidelity_card_model from "../Model/fidelity_card.js"
 import transaction_model from "../Model/trasaction.js"
 import bank_model from "../Model/bank_model.js"
 
-
+import { get, get_correlative } from '../Controller/correlative_controller.js';
 import { Sequelize } from 'sequelize';
 
 export const getPrueba = async (req, res) => {
@@ -83,7 +83,7 @@ export const complete_payment = async (req, res) => {
         }
 
         const pagos = req.body.pagos;
-        let correlativoFun
+        let correlativoFun = null
         for (const pago of pagos) {
             const tipo_pago = pago.tipo_pago.toLowerCase()
             const banco = pago.banco.toLowerCase()
@@ -107,9 +107,10 @@ export const complete_payment = async (req, res) => {
                 }
                 id_temp_card = card.dataValues.id_tarjeta;
             } else if (tipo_pago.includes("transaccion")) {
-                correlativoFun="prueba-001"
+                correlativeAux = await get_correlative(banco)
+                correlativeFun = banco+'-'+'00'+correlativeAux
                 let transaction = await transaction_model.create({
-                    correlativo: correlativoFun
+                    correlativo: correlativeFun
                 });
                 id_temp_transaction = transaction.dataValues.id_transacciones;
             } else if (tipo_pago.includes("fidelidad") && data_customer.nit_cliente) {
