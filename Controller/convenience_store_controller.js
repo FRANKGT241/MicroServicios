@@ -1,65 +1,71 @@
-import Bank from "../Model/bank_model.js";
+import Sale from "../Model/sale.js";
 import Payment from "../Model/payment.js";
+import Service from "../Model/service_model.js";
+import Bank from "../Model/bank_model.js";
 import Customer from "../Model/customer_model.js";
 import Card from "../Model/card_model.js";
-import Service from "../Model/service_model.js";
 
 export const savePayments = async (req, res) => {
-    const paymentsData = req.body;
+    const requestData = req.body;
 
     try {
-        for (const paymentData of paymentsData) {
+        const sale = await Sale.create({
+            fecha: new Date(),
+            total: 0,
+            estado: 'Pendiente',
+            id_cliente: null,
+            id_servicio: null
+        });
 
-            // Insertar o actualizar el servicio
-            const [service, createdService] = await Service.findOrCreate({
-                where: { nombre: paymentData.servicio },
-                defaults: {
-                    descripcion: 'Descripción del servicio'  
-                }
-            });
+        const id_venta = sale.id_venta;
 
-            for (const pago of paymentData.pagos) {
+        for (const request of requestData) {
+            for (const payment of request.pagos) {
+                let service = await Service.findOrCreate({
+                    where: { nombre: request.servicio },
+                    defaults: {
+                        descripcion: 'Descripción del servicio'  
+                    }
+                });
+
                 let bank = null;
-                if (pago.banco !== 'null') {
-                    // Insertar o actualizar el banco
-                    [bank] = await Bank.findOrCreate({
-                        where: { nombre: pago.banco },
+                if (payment.banco !== 'null') {
+                    bank = await Bank.findOrCreate({
+                        where: { nombre: payment.banco },
                         defaults: {
-                            descripcion: pago.descripcion || '',  
-                            contacto: pago.contacto || ''  
+                            descripcion: '',  
+                            contacto: ''  
                         }
                     });
                 }
 
-                // Insertar o actualizar el cliente
                 const [customer] = await Customer.findOrCreate({
-                    where: { nit: pago.nit_cliente || 'CF' },
+                    where: { nit: payment.nit_cliente },
                     defaults: {
-                        nombre: pago.nombre_cliente
+                        nombre: payment.nombre_cliente
                     }
                 });
 
                 let card = null;
-                if (pago.numero_tarjeta) {
-                    // Insertar o actualizar la tarjeta
-                    [card] = await Card.findOrCreate({
-                        where: { numero: pago.numero_tarjeta },
+                if (payment.numero_tarjeta) {
+                    card = await Card.findOrCreate({
+                        where: { numero: payment.numero_tarjeta },
                         defaults: {
-                            tipo: pago.tipo_pago.includes('credito') ? 'credito' : 'debito',
-                            expiracion: pago.expiracion || '12/25',  
-                            cvv: pago.cvv || 123  
+                            tipo: payment.tipo_pago.includes('credito') ? 'credito' : 'debito',
+                            expiracion: payment.expiracion || '12/25',  
+                            cvv: payment.cvv || 123  
                         }
                     });
                 }
 
-                // Insertar el pago
                 await Payment.create({
-                    tipo: pago.tipo_pago,
-                    monto: pago.monto,
-                    id_servicio: service.id_servicio,
-                    id_banco: bank ? bank.id_banco : null,
-                    id_tarjeta: card ? card.id_tarjeta : null,
-                    id_cliente: customer.id_cliente
+                    tipo: payment.tipo_pago,
+                    monto: payment.monto,
+                    id_servicio: service[0].id_servicio,
+                    id_banco: bank ? bank[0].id_banco : null,
+                    id_tarjeta: card ? card[0].id_tarjeta : null,
+                    id_cliente: customer.id_cliente,
+                    id_venta: id_venta
                 });
             }
         }
@@ -70,3 +76,5 @@ export const savePayments = async (req, res) => {
         res.status(500).json({ respuesta: "error", correlativo: null });
     }
 };
+
+
