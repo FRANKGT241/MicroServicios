@@ -1,37 +1,46 @@
 import sale_model from "../Model/sale.js";
+import CustomerModel from "../Model/customer_model.js";
 
 export const realese_pay = async (req, res) => {
     try {
-        const data = req.body
+        const data = req.body;
 
-            
-        data.forEach(item => {
-            const fecha = item.fecha;
-            const estado_pago = item.estado_pago;
+        for (const item of data) {
+            const { fecha, estado_pago, pagos } = item;
 
-            item.pagos.forEach(pago => {
-                const tipo_pago = pago.tipo_pago;
-                const banco = pago.banco;
-                const monto = pago.monto;
-                const numero_tarjeta = pago.numero_tarjeta;
-                const nombre_cliente = pago.nombre_cliente;
-                const nit_cliente = pago.nit_cliente;
+            for (const pago of pagos) {
+                const { tipo_pago, banco, monto, numero_tarjeta, nombre_cliente, nit_cliente } = pago;
+                if(!nit_cliente==null) {
+                    const clienteExistente = await CustomerModel.findOne({ where: { nit: nit_cliente } });
+                    if (!clienteExistente) {
+                        const nuevoCliente = await CustomerModel.create({
+                            nombre: nombre_cliente,
+                            nit: nit_cliente
+                        });
+                       
+                    }else{
+                        console.log("este ya existe")
+                    }
+                }
 
-                console.log(fecha);
-                console.log(estado_pago);
-                console.log(tipo_pago);
-                console.log(banco);
-                console.log(monto);
-                console.log(numero_tarjeta);
-                console.log(nombre_cliente);
-                console.log(nit_cliente);
-                console.log('\n'); 
-            });
-        });
+
+
+                console.log(`Fecha: ${fecha}`);
+                console.log(`Estado de Pago: ${estado_pago}`);
+                console.log(`Tipo de Pago: ${tipo_pago}`);
+                console.log(`Banco: ${banco}`);
+                console.log(`Monto: ${monto}`);
+                console.log(`Número de Tarjeta: ${numero_tarjeta}`);
+                console.log(`Nombre del Cliente: ${nombre_cliente}`);
+                console.log(`NIT del Cliente: ${nit_cliente}`);
+                console.log('\n');
+            }
+        }
+
         res.status(201).json({ 
             respuesta: "ok"
         });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-}
+};
