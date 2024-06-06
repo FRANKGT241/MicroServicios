@@ -3,6 +3,7 @@ import axios from 'axios';
 import payment_model from "../Model/payment.js";
 import bank_model from "../Model/bank_model.js";
 import sale_model from "../Model/sale.js"; // Importa el modelo de ventas
+import card_model from "../Model/card_model.js"; // Importa el modelo de tarjeta
 import { Sequelize } from 'sequelize';
 import moment from 'moment';
 
@@ -35,7 +36,7 @@ export const conciliatePayments = async (req, res) => {
         });
 
         const banks = {};
-        payments.forEach(payment => {
+        for (const payment of payments) {
             const bankName = payment.banco ? payment.banco.nombre : 'Unknown';
             if (!banks[bankName]) {
                 banks[bankName] = {
@@ -48,7 +49,7 @@ export const conciliatePayments = async (req, res) => {
             }
             banks[bankName].total_transactions += 1;
 
-            const paymentType = determinePaymentType(payment);
+            const paymentType = await determinePaymentType(payment);
 
             if (paymentType === 'credito') {
                 banks[bankName].total_credit_card += parseFloat(payment.monto);
@@ -59,7 +60,7 @@ export const conciliatePayments = async (req, res) => {
             } else if (paymentType === 'transferencia') {
                 banks[bankName].total_transfer += parseFloat(payment.monto);
             }
-        });
+        }
 
         const workspace = Object.keys(banks).map(bankName => ({
             name: bankName,
@@ -83,7 +84,7 @@ export const conciliatePayments = async (req, res) => {
     }
 };
 
-function determinePaymentType(payment) {
-
-    return 'credito';
+async function determinePaymentType(payment) {
+    const card = await card_model.findOne({ where: { id_tarjeta: payment.id_tarjeta } });
+    return card ? card.tipo : 'desconocido';
 }

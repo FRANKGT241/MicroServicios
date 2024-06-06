@@ -1,8 +1,9 @@
-// /mnt/data/payment.js
-import db from "../DB/db.js";
-import { DataTypes } from "sequelize";
-import BankModel from "./bank_model.js";
-import SaleModel from "./sale.js"; // Importa el modelo de ventas
+// payment.js
+import { DataTypes } from 'sequelize';
+import db from '../DB/db.js';
+import bank_model from './bank_model.js';
+import sale_model from './sale.js';
+import card_model from './card_model.js';
 
 const payment_model = db.define('pagos', {
     id_pago: {
@@ -32,9 +33,14 @@ const payment_model = db.define('pagos', {
         type: DataTypes.INTEGER,
         allowNull: true
     }
-}, { tableName: 'pagos', timestamps: false });
+}, {
+    tableName: 'pagos',
+    timestamps: false
+});
 
-payment_model.belongsTo(BankModel, { foreignKey: 'id_banco', targetKey: 'id_banco' });
-payment_model.belongsTo(SaleModel, { foreignKey: 'id_venta', targetKey: 'id_venta' }); // Define la asociación con ventas
+// Definición de relaciones
+payment_model.belongsTo(bank_model, { foreignKey: 'id_banco' });
+payment_model.belongsTo(sale_model, { foreignKey: 'id_venta' });
+payment_model.belongsTo(card_model, { foreignKey: 'id_tarjeta' });
 
 export default payment_model;
