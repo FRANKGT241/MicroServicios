@@ -83,7 +83,7 @@ export const complete_payment = async (req, res) => {
         }
 
         const pagos = req.body.pagos;
-        let correlativoFun = null
+        let correlativeFun = null
         let correlativeAux = null
         for (const pago of pagos) {
             const tipo_pago = pago.tipo_pago.toLowerCase()
