@@ -1,4 +1,4 @@
-import type_pay_model from "../Model/type_pay.js";
+import type_pay_model from "../Model/type_pay_model.js";
 
 export const get_all = async (req, res) => {
     try {

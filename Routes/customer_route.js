@@ -1,5 +1,5 @@
 import express from 'express';
-import { get_all_customers, find_customer_by_id, create_customer, update_customer } from '../Controller/Customer.js';
+import { get_all_customers, find_customer_by_id, create_customer, update_customer } from '../Controller/customer_controller.js';
 
 const route_customer = express.Router();
 
