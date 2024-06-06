@@ -7,6 +7,7 @@ import route_card from './Routes/card_route.js';
 import route_customer from './Routes/customer_route.js';
 import route_bank from './Routes/bank_route.js';
 import testRoutes from './Routes/test_route.js';
+import pre_payment_route from './Routes/test_route.js';
 
 const app = express();
 app.use(cors());
