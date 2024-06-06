@@ -150,7 +150,7 @@ export const complete_payment = async (req, res) => {
         res.status(201).json({ 
             respuesta: "ok", 
             estado_pago: "completado",
-            corelativo: correlativoFun
+            corelativo: correlativeFun
         });
     } catch (error) {
         res.status(500).json({ 
