@@ -5,27 +5,46 @@ export const realese_pay = async (req, res) => {
     try {
         const data = req.body;
 
+        let totalMonto = 0;
+        let estadoPagoVenta = null;
+        let idClienteFinal = null;
+        const fechaVenta = new Date(); // Utiliza la fecha y hora actual
+
         for (const item of data) {
-            const { fecha, estado_pago, pagos } = item;
+            const { estado_pago, pagos } = item;
+
+            // Guardar el estado de pago de la venta
+            if (!estadoPagoVenta) {
+                estadoPagoVenta = estado_pago;
+            }
 
             for (const pago of pagos) {
                 const { tipo_pago, banco, monto, numero_tarjeta, nombre_cliente, nit_cliente } = pago;
-                if(!nit_cliente==null) {
-                    const clienteExistente = await CustomerModel.findOne({ where: { nit: nit_cliente } });
+
+                // Creación de cliente
+                if (nit_cliente) {
+                    let clienteExistente = await CustomerModel.findOne({ where: { nit: nit_cliente } });
                     if (!clienteExistente) {
                         const nuevoCliente = await CustomerModel.create({
                             nombre: nombre_cliente,
                             nit: nit_cliente
                         });
-                       
-                    }else{
-                        console.log("este ya existe")
+                        clienteExistente = nuevoCliente;
+                        idClienteFinal = clienteExistente.id_cliente;
+                    } else {
+                        console.log("Este cliente ya existe");
                     }
+                    idClienteFinal = clienteExistente.id_cliente;
                 }
 
+                // Acumulación del monto
+                totalMonto += monto;
 
 
-                console.log(`Fecha: ${fecha}`);
+                //Pagos
+
+
+
                 console.log(`Estado de Pago: ${estado_pago}`);
                 console.log(`Tipo de Pago: ${tipo_pago}`);
                 console.log(`Banco: ${banco}`);
@@ -36,8 +55,28 @@ export const realese_pay = async (req, res) => {
                 console.log('\n');
             }
         }
+        if (idClienteFinal) {
+            await sale_model.create({
+                fecha: fechaVenta,
+                total: totalMonto,
+                estado: estadoPagoVenta,
+                id_cliente: idClienteFinal,
+                id_servicio: 3
+            });
+        } else {
+            await sale_model.create({
+                fecha: fechaVenta,
+                total: totalMonto,
+                estado: estadoPagoVenta,
+                id_cliente: null,
+                id_servicio: 3
+            });
+        }
 
-        res.status(201).json({ 
+       
+
+
+        res.status(201).json({
             respuesta: "ok"
         });
     } catch (error) {

@@ -8,6 +8,8 @@ import fidelity_card_model from "../Model/fidelity_card.js"
 import trasaction_model from "../Model/trasaction.js"
 import bank_model from "../Model/bank_model.js"
 
+
+import { Sequelize } from 'sequelize';
 // // GET
 // export const get_all_cards = async (req, res) => {
 //     try {
@@ -66,110 +68,102 @@ export const release_bomb = async (req, res) => {
 
 export const complete_payment = async (req, res) => {
     try {
-        const sales_saved = await sale_model.findByPk(req.body.id_venta)
+        const sales_saved = await sale_model.findByPk(req.body.id_venta);
         if (!sales_saved) {
-            return res.status(404).json({ message: "Venta inexistente" })
+            return res.status(404).json({ message: "Venta inexistente" });
         }
 
-        const data_customer = req.body.pagos[0]
-        if(data_customer.nombre_cliente!="CF")
-        {
+        const data_customer = req.body.pagos[0];
+        if (data_customer && data_customer.nombre_cliente !== "CF") {
+            if (!data_customer.nit_cliente) {
+                return res.status(400).json({ message: "NIT del cliente no proporcionado" });
+            }
+
             let customer = await customer_model.findOne({
-                nit: data_customer.nit_customere
-            })
+                where: { nit: data_customer.nit_cliente }
+            });
+
             if (!customer) {
-                customer = await sale_model.create({
-                    nombre: data_customer.nombre_customere,
-                    nit: data_customer.nit_customere
-                })
-                customer = customer.dataValues
-                console.log("Cliente registrado " + customer)
-            } 
-    
-            const sale_update = await sale_model.update(
+                customer = await customer_model.create({
+                    nombre: data_customer.nombre_cliente,
+                    nit: data_customer.nit_cliente
+                });
+                console.log("Cliente registrado " + customer);
+            }
+
+            await sale_model.update(
                 {
                     id_cliente: customer.id_cliente,
                     estado: "completado"
                 },
                 {
-                    where:{
-                            id_venta: customer.id_cliente
-                        }
+                    where: { id_venta: req.body.id_venta }
                 }
-            )
+            );
         }
 
-        const data = req.body
-        
-        for (const item of data) {
-            for (const pago of item.pagos) {
-                const tipo_pago = pago.tipo_pago;
-                const banco = pago.banco;
-                const monto = pago.monto;
-                const numero_tarjeta = pago.numero_tarjeta;
-                let id_temp_card = null
-                let id_temp_transaction = null
-                let id_temp_fidelity = null
-                let id_temp_bank = null
-                
-                if (tipo_pago.includes("debito") || tipo_pago.includes("credito")){
-                    id_temp_card = await card_model.findOne({
-                        numero: numero_tarjeta
-                    })
-                    if(!id_temp_card){
-                        let cardCreate = card_model.create({
-                            tipo: tipo_pago,
-                            numero: numero_tarjeta
-                        })
-                        id_temp_card = id_temp_card.dataValues
-                    }
-                }
-                else if (tipo_pago.includes("transaccion")){
-                    id_temp_transaction = await trasaction_model.create({
-                        correlativo:"prueba-001"
-                    })
-                    id_temp_transaction=id_temp_transaction.dataValues
-                }
-                else if (tipo_pago.includes("fidelidad") && data_customer.nit_cliente!=null){
-                    id_temp_fidelity = await card_model.findOne({
-                        numero: numero_tarjeta
-                    })
-                    if(!id_temp_fidelity){
-                        let cardCreate = fidelity_card_model.create({
-                            numero: numero_tarjeta
-                        })
-                        id_temp_fidelity = id_temp_fidelity.dataValues
-                    }
-                }
+        const pagos = req.body.pagos;
 
-                if(banco){
-                    id_temp_bank = await bank_model.findOne({
-                        where: {
-                            numero: { [Sequelize.Op.like]: '%banrural%' }
-                        }
-                    })
-                }
+        for (const pago of pagos) {
+            const tipo_pago = pago.tipo_pago;
+            const banco = pago.banco;
+            const monto = pago.monto;
+            const numero_tarjeta = pago.numero_tarjeta;
+            let id_temp_card = null;
+            let id_temp_transaction = null;
+            let id_temp_fidelity = null;
+            let id_temp_bank = null;
 
-                try {
-                    await payment_model.create({
-                        monto: monto,
-                        id_banco: id_temp_bank,
-                        id_tarjeta: id_temp_card,
-                        id_venta: req.body.id_venta,
-                        id_tarjetafidelidad: id_temp_fidelity, 
-                        id_transacciones: id_temp_transaction
+            if (tipo_pago.includes("debito") || tipo_pago.includes("credito")) {
+                let card = await card_model.findOne({
+                    where: { numero: numero_tarjeta }
+                });
+                if (!card) {
+                    card = await card_model.create({
+                        tipo: tipo_pago,
+                        numero: numero_tarjeta
                     });
-                } catch (error) {
-                    console.error("Error registrar pago:", error);
                 }
+                id_temp_card = card.dataValues.id_tarjeta;
+            } else if (tipo_pago.includes("transaccion")) {
+                let transaction = await transaction_model.create({
+                    correlativo: "prueba-001"
+                });
+                id_temp_transaction = transaction.dataValues.id_transacciones;
+            } else if (tipo_pago.includes("fidelidad") && data_customer.nit_cliente) {
+                let fidelityCard = await fidelity_card_model.findOne({
+                    where: { numero: numero_tarjeta }
+                });
+                if (!fidelityCard) {
+                    fidelityCard = await fidelity_card_model.create({
+                        numero: numero_tarjeta
+                    });
+                }
+                id_temp_fidelity = fidelityCard.dataValues.id_tarjetafidelidad;
+            }
+
+            if (banco) {
+                let bank = await bank_model.findOne({
+                    where: { nombre: { [Sequelize.Op.like]: '%banrural%' } }
+                });
+                id_temp_bank = bank ? bank.dataValues.id_banco : null;
+            }
+
+            try {
+                await payment_model.create({
+                    monto: monto,
+                    id_banco: id_temp_bank,
+                    id_tarjeta: id_temp_card,
+                    id_venta: req.body.id_venta,
+                    id_tarjetafidelidad: id_temp_fidelity,
+                    id_transacciones: id_temp_transaction
+                });
+            } catch (error) {
+                console.error("Error registrar pago:", error);
             }
         }
-        
-        console.log(postPay)
-        res.status(201).json({ 
-            respuesta: "ok", 
-            id_venta: postPay.dataValues.id_venta 
-        });
+
+        res.status(201).json({ respuesta: "ok", id_venta: req.body.id_venta });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

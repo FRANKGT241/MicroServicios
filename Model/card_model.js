@@ -15,14 +15,6 @@ const CardModel = db.define('tarjeta', {
     numero: {
         type: DataTypes.STRING,
         allowNull: false
-    },
-    expiracion: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    cvv: {
-        type: DataTypes.INTEGER,
-        allowNull: false
     }
 }, { tableName: 'tarjeta',timestamps: false });
 
