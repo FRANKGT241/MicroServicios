@@ -66,114 +66,114 @@ export const release_bomb = async (req, res) => {
     }
 }
 
-export const complete_payment = async (req, res) => {
-    try {
-        const sales_saved = await sale_model.findByPk(req.body.id_venta);
-        if (!sales_saved) {
-            return res.status(404).json({ message: "Venta inexistente" });
-        }
+// export const complete_payment = async (req, res) => {
+//     try {
+//         const sales_saved = await sale_model.findByPk(req.body.id_venta);
+//         if (!sales_saved) {
+//             return res.status(404).json({ message: "Venta inexistente" });
+//         }
 
-        const data_customer = req.body.pagos[0];
-        if (data_customer && data_customer.nombre_cliente !== "CF") {
-            if (!data_customer.nit_cliente) {
-                return res.status(400).json({ message: "NIT del cliente no proporcionado" });
-            }
+//         const data_customer = req.body.pagos[0];
+//         if (data_customer && data_customer.nombre_cliente !== "CF") {
+//             if (!data_customer.nit_cliente) {
+//                 return res.status(400).json({ message: "NIT del cliente no proporcionado" });
+//             }
 
-            let customer = await customer_model.findOne({
-                where: { nit: data_customer.nit_cliente }
-            });
+//             let customer = await customer_model.findOne({
+//                 where: { nit: data_customer.nit_cliente }
+//             });
 
-            if (!customer) {
-                customer = await customer_model.create({
-                    nombre: data_customer.nombre_cliente,
-                    nit: data_customer.nit_cliente
-                });
-                console.log("Cliente registrado " + customer);
-            }
+//             if (!customer) {
+//                 customer = await customer_model.create({
+//                     nombre: data_customer.nombre_cliente,
+//                     nit: data_customer.nit_cliente
+//                 });
+//                 console.log("Cliente registrado " + customer);
+//             }
 
-            await sale_model.update(
-                {
-                    id_cliente: customer.id_cliente,
-                    estado: "completado"
-                },
-                {
-                    where: { id_venta: req.body.id_venta }
-                }
-            );
-        }
+//             await sale_model.update(
+//                 {
+//                     id_cliente: customer.id_cliente,
+//                     estado: "completado"
+//                 },
+//                 {
+//                     where: { id_venta: req.body.id_venta }
+//                 }
+//             );
+//         }
 
-        const pagos = req.body.pagos;
-        let correlativoFun
-        for (const pago of pagos) {
-            const tipo_pago = pago.tipo_pago.toLowerCase()
-            const banco = pago.banco.toLowerCase()
-            const monto = pago.monto
-            const numero_tarjeta = pago.numero_tarjeta
+//         const pagos = req.body.pagos;
+//         let correlativoFun
+//         for (const pago of pagos) {
+//             const tipo_pago = pago.tipo_pago.toLowerCase()
+//             const banco = pago.banco.toLowerCase()
+//             const monto = pago.monto
+//             const numero_tarjeta = pago.numero_tarjeta
 
-            let id_temp_card = null;
-            let id_temp_transaction = null;
-            let id_temp_fidelity = null;
-            let id_temp_bank = null;
+//             let id_temp_card = null;
+//             let id_temp_transaction = null;
+//             let id_temp_fidelity = null;
+//             let id_temp_bank = null;
 
-            if (tipo_pago.includes("debito") || tipo_pago.includes("credito")) {
-                let card = await card_model.findOne({
-                    where: { numero: numero_tarjeta }
-                });
-                if (!card) {
-                    card = await card_model.create({
-                        tipo: tipo_pago,
-                        numero: numero_tarjeta
-                    });
-                }
-                id_temp_card = card.dataValues.id_tarjeta;
-            } else if (tipo_pago.includes("transaccion")) {
-                correlativoFun="prueba-001"
-                let transaction = await transaction_model.create({
-                    correlativo: correlativoFun
-                });
-                id_temp_transaction = transaction.dataValues.id_transacciones;
-            } else if (tipo_pago.includes("fidelidad") && data_customer.nit_cliente) {
-                let fidelityCard = await fidelity_card_model.findOne({
-                    where: { numero: numero_tarjeta }
-                });
-                if (!fidelityCard) {
-                    fidelityCard = await fidelity_card_model.create({
-                        numero: numero_tarjeta
-                    });
-                }
-                id_temp_fidelity = fidelityCard.dataValues.id_tarjetafidelidad;
-            }
+//             if (tipo_pago.includes("debito") || tipo_pago.includes("credito")) {
+//                 let card = await card_model.findOne({
+//                     where: { numero: numero_tarjeta }
+//                 });
+//                 if (!card) {
+//                     card = await card_model.create({
+//                         tipo: tipo_pago,
+//                         numero: numero_tarjeta
+//                     });
+//                 }
+//                 id_temp_card = card.dataValues.id_tarjeta;
+//             } else if (tipo_pago.includes("transaccion")) {
+//                 correlativoFun="prueba-001"
+//                 let transaction = await transaction_model.create({
+//                     correlativo: correlativoFun
+//                 });
+//                 id_temp_transaction = transaction.dataValues.id_transacciones;
+//             } else if (tipo_pago.includes("fidelidad") && data_customer.nit_cliente) {
+//                 let fidelityCard = await fidelity_card_model.findOne({
+//                     where: { numero: numero_tarjeta }
+//                 });
+//                 if (!fidelityCard) {
+//                     fidelityCard = await fidelity_card_model.create({
+//                         numero: numero_tarjeta
+//                     });
+//                 }
+//                 id_temp_fidelity = fidelityCard.dataValues.id_tarjetafidelidad;
+//             }
 
-            if (banco) {
-                let bank = await bank_model.findOne({
-                    where: { nombre: { [Sequelize.Op.like]: '%banrural%' } }
-                });
-                id_temp_bank = bank ? bank.dataValues.id_banco : null;
-            }
+//             if (banco) {
+//                 let bank = await bank_model.findOne({
+//                     where: { nombre: { [Sequelize.Op.like]: '%banrural%' } }
+//                 });
+//                 id_temp_bank = bank ? bank.dataValues.id_banco : null;
+//             }
 
-            try {
-                await payment_model.create({
-                    monto: monto,
-                    id_banco: id_temp_bank,
-                    id_tarjeta: id_temp_card,
-                    id_venta: req.body.id_venta,
-                    id_tarjetafidelidad: id_temp_fidelity,
-                    id_transacciones: id_temp_transaction
-                });
-            } catch (error) {
-                console.error("Error registrar pago:", error);
-            }
-        }
+//             try {
+//                 await payment_model.create({
+//                     monto: monto,
+//                     id_banco: id_temp_bank,
+//                     id_tarjeta: id_temp_card,
+//                     id_venta: req.body.id_venta,
+//                     id_tarjetafidelidad: id_temp_fidelity,
+//                     id_transacciones: id_temp_transaction
+//                 });
+//             } catch (error) {
+//                 console.error("Error registrar pago:", error);
+//             }
+//         }
 
-        res.status(201).json({ 
-            respuesta: "ok", 
-            estado_pago: "completado",
-            corelativo: correlativoFun
-        });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-}
+//         res.status(201).json({ 
+//             respuesta: "ok", 
+//             estado_pago: "completado",
+//             corelativo: correlativoFun
+//         });
+//     } catch (error) {
+//         res.status(500).json({ message: error.message });
+//     }
+// }
 
 
 // // PUT
@@ -189,3 +189,128 @@ export const complete_payment = async (req, res) => {
 //         res.json({ message: error.message });
 //     }
 // }
+
+export const complete_payment = async (req, res) => {
+    const transaction = await sequelize.transaction();
+    try {
+        const sales_saved = await sale_model.findByPk(req.body.id_venta, { transaction });
+        if (!sales_saved) {
+            await transaction.rollback();
+            return res.status(404).json({ message: "Venta inexistente" });
+        }
+
+        const data_customer = req.body.pagos[0];
+        if (data_customer && data_customer.nombre_cliente !== "CF") {
+            if (!data_customer.nit_cliente) {
+                await transaction.rollback();
+                return res.status(400).json({ message: "NIT del cliente no proporcionado" });
+            }
+
+            let customer = await customer_model.findOne({
+                where: { nit: data_customer.nit_cliente },
+                transaction
+            });
+
+            if (!customer) {
+                customer = await customer_model.create({
+                    nombre: data_customer.nombre_cliente,
+                    nit: data_customer.nit_cliente
+                }, { transaction });
+                console.log("Cliente registrado " + customer);
+            }
+
+            await sale_model.update(
+                {
+                    id_cliente: customer.id_cliente,
+                    estado: "completado"
+                },
+                {
+                    where: { id_venta: req.body.id_venta },
+                    transaction
+                }
+            );
+        }
+
+        const pagos = req.body.pagos;
+        let correlativoFun;
+        for (const pago of pagos) {
+            const tipo_pago = pago.tipo_pago.toLowerCase();
+            const banco = pago.banco.toLowerCase();
+            const monto = pago.monto;
+            const numero_tarjeta = pago.numero_tarjeta;
+
+            let id_temp_card = null;
+            let id_temp_transaction = null;
+            let id_temp_fidelity = null;
+            let id_temp_bank = null;
+
+            if (tipo_pago.includes("debito") || tipo_pago.includes("credito")) {
+                let card = await card_model.findOne({
+                    where: { numero: numero_tarjeta },
+                    transaction
+                });
+                if (!card) {
+                    card = await card_model.create({
+                        tipo: tipo_pago,
+                        numero: numero_tarjeta
+                    }, { transaction });
+                }
+                id_temp_card = card.dataValues.id_tarjeta;
+            } else if (tipo_pago.includes("transaccion")) {
+                correlativoFun = "prueba-001";
+                let transaction_record = await transaction_model.create({
+                    correlativo: correlativoFun
+                }, { transaction });
+                id_temp_transaction = transaction_record.dataValues.id_transacciones;
+            } else if (tipo_pago.includes("fidelidad") && data_customer.nit_cliente) {
+                let fidelityCard = await fidelity_card_model.findOne({
+                    where: { numero: numero_tarjeta },
+                    transaction
+                });
+                if (!fidelityCard) {
+                    fidelityCard = await fidelity_card_model.create({
+                        numero: numero_tarjeta
+                    }, { transaction });
+                }
+                id_temp_fidelity = fidelityCard.dataValues.id_tarjetafidelidad;
+            }
+
+            if (banco) {
+                let bank = await bank_model.findOne({
+                    where: { nombre: { [Sequelize.Op.like]: '%banrural%' } },
+                    transaction
+                });
+                id_temp_bank = bank ? bank.dataValues.id_banco : null;
+            }
+
+            try {
+                await payment_model.create({
+                    monto: monto,
+                    id_banco: id_temp_bank,
+                    id_tarjeta: id_temp_card,
+                    id_venta: req.body.id_venta,
+                    id_tarjetafidelidad: id_temp_fidelity,
+                    id_transacciones: id_temp_transaction
+                }, { transaction });
+            } catch (error) {
+                console.error("Error registrar pago:", error);
+                await transaction.rollback();
+                return res.status(500).json({ message: "Error registrar pago" });
+            }
+        }
+
+        await transaction.commit();
+        res.status(201).json({ 
+            respuesta: "ok", 
+            estado_pago: "completado",
+            correlativo: correlativoFun
+        });
+    } catch (error) {
+        await transaction.rollback();
+        res.status(500).json({ 
+            respuesta: error.message,
+            estado_pago:"pendiente",
+            corelativo:null
+        });
+    }
+}
