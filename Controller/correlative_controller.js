@@ -40,7 +40,7 @@ export const get = async (req, res) => {
         let bank="banrural"
         const resp = await get_correlative(bank);
         res.status(200).json({
-            msg: bank+'-'+resp
+            msg: bank+'-'+resp.total_registros
         });
     } catch (error) {
         res.json({ message: error.message });
