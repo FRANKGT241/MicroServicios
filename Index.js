@@ -1,12 +1,24 @@
 import express from 'express';
 import cors from 'cors';
 import db from './DB/db.js';
+import route_service from './Routes/service_route.js';
+import route_type_pay from './Routes/type_pay_route.js';
+import route_card from './Routes/card_route.js';
+import route_customer from './Routes/customer_route.js';
+import route_bank from './Routes/bank_route.js';
+import testRoutes from './Routes/test_route.js';
 import gasoline_payment_route from './Routes/gasoline_payment_route.js';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use('/service/', route_service);
+app.use('/typePay/', route_type_pay);
+app.use('/card/', route_card);
+app.use('/customer/', route_customer);
+app.use('/bank/', route_bank);
+app.use('/test', testRoutes);
 //Mendel
 
 
@@ -33,9 +45,9 @@ app.use(express.json());
 
 
 
-//Ajpop y frank
-
+//Ajpop y Frank
 app.use('service/gasoline', gasoline_payment_route);
+
 
 
 
