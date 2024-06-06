@@ -10,6 +10,10 @@ import testRoutes from './Routes/test_route.js';
 import gasoline_route from './Routes/gasoline_payment_route.js';
 import conciliationRoute from './Routes/conciliation_route.js';
 
+// genera cierre de caja 
+import cron from 'node-cron';
+import closeCash from './Controller/close_cash.js';
+
 
 const app = express();
 app.use(cors());
@@ -26,13 +30,11 @@ app.use('/test', testRoutes);
 //Mendel
 app.use('/', conciliationRoute);
 
-
-
-
-
-
-
-
+// Configurar cron job para ejecutar la función a las 11:59 PM todos los días
+cron.schedule('59 23 * * *', () => {
+    console.log('Ejecutando cierre de caja automático');
+    closeCash();
+});
 
 
 
@@ -44,20 +46,7 @@ app.use('/convenience_spare_parts_store', convenience_store_route);
 
 
 
-
-
-
-
-
-
-
 //Ajpop
-
-
-
-
-
-
 
 
 

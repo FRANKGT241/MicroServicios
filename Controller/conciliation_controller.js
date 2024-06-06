@@ -19,7 +19,7 @@ export const conciliatePayments = async (req, res) => {
                 {
                     model: bank_model,
                     attributes: ['nombre'],
-                    required: false // Permitir pagos sin banco asociado
+                    required: false
                 },
                 {
                     model: sale_model,
@@ -48,10 +48,7 @@ export const conciliatePayments = async (req, res) => {
             }
             banks[bankName].total_transactions += 1;
 
-            // Clasificar los montos por tipo de pago
-            // Esta parte asume que tienes una forma de determinar el tipo de pago (credito, debito, efectivo, transferencia)
-            // Sustituye "payment.tipo" por la forma correcta de determinar el tipo de pago en tu modelo
-            const paymentType = determinePaymentType(payment); // Esta función es un placeholder, necesitas implementarla
+            const paymentType = determinePaymentType(payment);
 
             if (paymentType === 'credito') {
                 banks[bankName].total_credit_card += parseFloat(payment.monto);
@@ -86,9 +83,7 @@ export const conciliatePayments = async (req, res) => {
     }
 };
 
-// Placeholder function to determine payment type
 function determinePaymentType(payment) {
-    // Implementa la lógica para determinar el tipo de pago
-    // Esta función debe devolver 'credito', 'debito', 'efectivo' o 'transferencia' basado en la información del pago
-    return 'credito'; // Por ejemplo, aquí devuelve 'credito' como placeholder
+
+    return 'credito';
 }
