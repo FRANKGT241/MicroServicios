@@ -5,7 +5,7 @@ import payment_model from "../Model/payment.js"
 
 import card_model from "../Model/card_model.js"
 import fidelity_card_model from "../Model/fidelity_card.js"
-import trasaction_model from "../Model/trasaction.js"
+import transaction_model from "../Model/trasaction.js"
 import bank_model from "../Model/bank_model.js"
 
 
