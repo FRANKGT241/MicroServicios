@@ -109,7 +109,7 @@ export const complete_payment = async (req, res) => {
                 id_temp_card = card.dataValues.id_tarjeta;
             } else if (tipo_pago.includes("transaccion")) {
                 correlativeAux = await get_correlative(banco)
-                correlativeFun = banco+'-'+'00'+correlativeAux
+                correlativeFun = banco+'-'+'00'+correlativeAux.total_registros
                 let transaction = await transaction_model.create({
                     correlativo: correlativeFun
                 });
