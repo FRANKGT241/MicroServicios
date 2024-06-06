@@ -11,9 +11,6 @@ const fidelity_card_model = db.define('tarjeta_fidelidad', {
     numero: { 
         type: DataTypes.STRING 
     },
-    expiracion: { 
-        type: DataTypes.DATE
-    },
     puntos: { 
         type: DataTypes.INTEGER
     },
