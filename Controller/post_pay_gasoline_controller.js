@@ -1,4 +1,4 @@
-import saleModel from "../Model/sale";
+import saleModel from "../Model/sale.js";
 
 // // GET
 // export const get_all_cards = async (req, res) => {
