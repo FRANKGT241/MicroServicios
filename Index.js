@@ -8,6 +8,7 @@ import route_customer from './Routes/customer_route.js';
 import route_bank from './Routes/bank_route.js';
 import testRoutes from './Routes/test_route.js';
 import gasoline_payment_route from './Routes/gasoline_payment_route.js';
+import conciliationRoute from './Routes/conciliation_route.js';
 
 const app = express();
 app.use(cors());
@@ -19,8 +20,9 @@ app.use('/card/', route_card);
 app.use('/customer/', route_customer);
 app.use('/bank/', route_bank);
 app.use('/test', testRoutes);
-//Mendel
 
+//Mendel
+app.use('/Administration/payments', conciliationRoute);
 
 
 
