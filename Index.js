@@ -46,7 +46,7 @@ app.use('/test', testRoutes);
 
 
 //Ajpop y Frank
-app.use('service/gasoline', gasoline_payment_route);
+app.use('/service/gasoline', gasoline_payment_route);
 
 
 
