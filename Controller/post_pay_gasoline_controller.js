@@ -8,7 +8,7 @@ import fidelity_card_model from "../Model/fidelity_card.js"
 import transaction_model from "../Model/trasaction.js"
 import bank_model from "../Model/bank_model.js"
 
-import { get, get_correlative } from '../Controller/correlative_controller.js';
+import { get_correlative } from '../Controller/correlative_controller.js';
 import { Sequelize } from 'sequelize';
 
 export const getPrueba = async (req, res) => {
