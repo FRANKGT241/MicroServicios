@@ -37,7 +37,7 @@ const get_correlative = async (bankName) => {
 
 export const get = async (req, res) => {
     try {
-        bank='banrural'
+        let bank="banrural"
         const resp = await get_correlative(bank);
         res.status(200).json({
             msg: bank+'-'+resp
