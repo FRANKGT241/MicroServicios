@@ -10,17 +10,7 @@ import bank_model from "../Model/bank_model.js"
 
 
 import { Sequelize } from 'sequelize';
-// // GET
-// export const get_all_cards = async (req, res) => {
-//     try {
-//         const cards = await Card.findAll();
-//         res.status(200).json(cards);
-//     } catch (error) {
-//         res.json({ message: error.message });
-//     }
-// }
 
-// GET
 export const getPrueba = async (req, res) => {
     try {
         res.status(200).json({
@@ -31,18 +21,7 @@ export const getPrueba = async (req, res) => {
     }
 }
 
-// // GET ID
-// export const find_card_by_id = async (req, res) => {
-//     try {
-//         const card = await Card.findByPk(req.params.id_tarjeta);
-//         if (!card) {
-//             return res.status(404).json({ message: "Tarjeta no encontrada" });
-//         }
-//         res.json(card);
-//     } catch (error) {
-//         res.json({ message: error.message });
-//     }
-// }
+
 
 // Post Liberar bomba gasolina
 export const release_bomb = async (req, res) => {
@@ -66,6 +45,7 @@ export const release_bomb = async (req, res) => {
     }
 }
 
+//Post Completar pago 
 export const complete_payment = async (req, res) => {
     try {
         const sales_saved = await sale_model.findByPk(req.body.id_venta);
@@ -171,22 +151,10 @@ export const complete_payment = async (req, res) => {
             corelativo: correlativoFun
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ 
+            respuesta: error.message,
+            estado_pago:"pendiente",
+            corelativo: null
+         });
     }
 }
-
-
-// PUT
-export const update_card = async (req, res) => {
-    try {
-        const card = await Card.findByPk(req.params.id_tarjeta);
-        if (!card) {
-            return res.status(404).json({ message: "Tarjeta no encontrada" });
-        }
-        const updatedCard = await card.update(req.body);
-        res.json({ message: "Tarjeta actualizada correctamente", card: updatedCard });
-    } catch (error) {
-        res.json({ message: error.message });
-    }
-}
-
