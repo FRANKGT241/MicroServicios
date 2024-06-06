@@ -8,10 +8,20 @@ import bank_model from "../Model/bank_model.js";
 import { get_correlative } from '../Controller/correlative_controller.js';
 import { Sequelize } from 'sequelize';
 
-// Post  tienda de conveniencia
+// Post  tienda de conveniencia o repuesto
 export const save_convenience_store = async (req, res) => {
     try {
         const { fecha, servicio, pagos } = req.body[0]; 
+
+        // Determine the id_servicio based on the service type
+        let id_servicio;
+        if (servicio.toLowerCase() === 'tienda de conveniencia') {
+            id_servicio = 1; // Assuming 1 is the id for convenience store service
+        } else if (servicio.toLowerCase() === 'repuesto') {
+            id_servicio = 2; // Assuming 2 is the id for spare parts service
+        } else {
+            return res.status(400).json([{ respuesta: "error", correlativo: null, mensaje: "Tipo de servicio no válido" }]);
+        }
 
         // Process sale
         const sale_date = new Date(fecha);
@@ -20,7 +30,7 @@ export const save_convenience_store = async (req, res) => {
             total: pagos.reduce((acc, pago) => acc + pago.monto, 0),
             estado: 'pendiente',
             id_cliente: null,
-            id_servicio: 1 // Assuming 4 is the id for convenience store service
+            id_servicio
         });
 
         let correlativeFun = null;

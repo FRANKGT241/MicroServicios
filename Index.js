@@ -39,7 +39,7 @@ app.use('/', conciliationRoute);
 //Mario
 import convenience_store_route from './Routes/convenience_store_route.js';
 
-app.use('/convenience_store', convenience_store_route);
+app.use('/convenience_spare_parts_store', convenience_store_route);
 
 
 
