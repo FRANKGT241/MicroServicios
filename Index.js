@@ -7,6 +7,7 @@ import route_card from './Routes/card_route.js';
 import route_customer from './Routes/customer_route.js';
 import route_bank from './Routes/bank_route.js';
 import testRoutes from './Routes/test_route.js';
+import gasoline_route from './Routes/gasoline_payment_route.js';
 
 
 const app = express();
@@ -62,7 +63,7 @@ app.use('/api', convenienceStoreRoute);
 
 
 //Frank
-
+app.use('/gasoline', gasoline_route);
 
 
 
