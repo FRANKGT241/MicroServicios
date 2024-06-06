@@ -36,7 +36,7 @@ export const conciliatePayments = async (req, res) => {
 
         const banks = {};
         payments.forEach(payment => {
-            const bankName = payment.bank_model ? payment.bank_model.nombre : 'Unknown';
+            const bankName = payment.banco ? payment.banco.nombre : 'Unknown';
             if (!banks[bankName]) {
                 banks[bankName] = {
                     total_transactions: 0,
@@ -48,7 +48,10 @@ export const conciliatePayments = async (req, res) => {
             }
             banks[bankName].total_transactions += 1;
 
-            const paymentType = determinePaymentType(payment);
+            // Clasificar los montos por tipo de pago
+            // Esta parte asume que tienes una forma de determinar el tipo de pago (credito, debito, efectivo, transferencia)
+            // Sustituye "payment.tipo" por la forma correcta de determinar el tipo de pago en tu modelo
+            const paymentType = determinePaymentType(payment); // Esta función es un placeholder, necesitas implementarla
 
             if (paymentType === 'credito') {
                 banks[bankName].total_credit_card += parseFloat(payment.monto);
