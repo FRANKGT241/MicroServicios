@@ -28,7 +28,6 @@ const get_correlative = async (bankName) => {
         const totalRegistros = result.total_registros + 1;
 
         return {
-            ...bank.dataValues,
             total_registros: totalRegistros
         };
     } catch (error) {
@@ -38,9 +37,10 @@ const get_correlative = async (bankName) => {
 
 export const get = async (req, res) => {
     try {
-        const resp = await get_correlative("banrural");
+        bank='banrural'
+        const resp = await get_correlative(bank);
         res.status(200).json({
-            msg: resp
+            msg: bank+'-'+resp
         });
     } catch (error) {
         res.json({ message: error.message });
