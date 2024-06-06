@@ -16,6 +16,13 @@ const sale_model = db.define('venta', {
     },
     estado: { 
         type: DataTypes.STRING 
+    },
+    id_cliente: { 
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
+    id_servicio: { 
+        type: DataTypes.INTEGER 
     }
 }, { table_name: 'venta',
      timestamps: false 
