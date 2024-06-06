@@ -12,7 +12,8 @@ const trasaction_model = db.define('transaccion', {
         type: DataTypes.STRING 
     }
 }, { table_name: 'transaccion',
-     timestamps: false 
+     timestamps: false,
+     freezeTableName: true 
  });
 
 
